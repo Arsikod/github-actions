@@ -20,3 +20,6 @@ jobs:
           echo ⌛installing dependencies
           pnpm install
         working-directory: 04-using-actions/react-app
+      - name: Run Unit Tests
+        run: pnpm test
+        working-directory: 04-using-actions/react-app
