@@ -7,7 +7,16 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Printing Folders
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Install Dependencies
         run: |
-          cd 04-using-actions/react-app/src
-          ls
+          echo ⌛installing dependencies
+          pnpm install
+        working-directory: 04-using-actions/react-app
