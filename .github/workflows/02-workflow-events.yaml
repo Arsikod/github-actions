@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Show the trigger
-        run: echo  "This workflow has a ${{ github.event_name }} event trigger."
+        run: echo  "This workflow has a ${{ github.event_name }} event trigger. After PR"
