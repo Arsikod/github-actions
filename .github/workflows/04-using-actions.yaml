@@ -8,4 +8,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Printing Folders
-        run: ls
+        run: |
+          cd 04-using-actions
+          ls
