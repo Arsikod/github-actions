@@ -1,0 +1,25 @@
+name: 06 - Contexts
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  MY_VAR: "I am single workflow var"
+
+jobs:
+  echo-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display information
+        run: |
+          echo "Event name ${{github.event_name}}"
+          echo "Ref: ${{github.ref_name}}"
+          echo "SHA: ${{github.sha}}"
+          echo "Actor: ${{github.actor}}"
+          echo "Workflow: ${{github.workflow}}"
+          echo "Run ID: ${{github.run_id}}"
+          echo "Run Number: ${{github.run_number}}"
+      - name: Retrieve Variables
+        run: |
+          echo "Single workflow: $MY_VAR"
+          echo "Repo: $MY_REP_VAR"
