@@ -10,9 +10,14 @@ on:
 env:
   MY_VAR: "I am single workflow var"
   MY_REP_VAR: ${{vars.MY_REP_VAR}}
+  MY_WORKFLOW_VAR: "workflow"
+  MY_OVERWRITTEN_VAR: "workflow"
 
 jobs:
   echo-data:
+    env:
+      MY_JOB_VAR: "job"
+      MY_OVERWRITTEN_VAR: "job"
     runs-on: ubuntu-latest
     steps:
       - name: Display information
@@ -29,3 +34,13 @@ jobs:
           echo "Single workflow: $MY_VAR"
           echo "Repo: $MY_REP_VAR"
           echo "Inputs: ${{inputs.debug}}"
+      - name: Print Env Variables
+        env:
+          MY_OVERWRITTEN_VAR: "step"
+        run: |
+          echo Workflow env: $MY_WORKFLOW_VAR
+          echo Overwritten env: $MY_OVERWRITTEN_VAR
+      - name: Print Env Variables
+        run: |
+          echo Workflow env: $MY_WORKFLOW_VAR
+          echo Overwritten env: $MY_OVERWRITTEN_VAR
