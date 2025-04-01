@@ -42,6 +42,6 @@ jobs:
     steps:
       - name: Print prod Variables
         run: |
-          echo "Org overwritten var: $OVERRITEN_PROD_ENV_VAR"
-          echo "Repo var: $MY_REP_VAR"
-          echo "Environment var: $TARGET_VAR"
+          echo "Org overwritten var: ${{vars.OVERRITEN_PROD_ENV_VAR}}"
+          echo "Repo var: ${{vars.MY_REP_VAR}}"
+          echo "Environment var: ${{vars.TARGET_VAR}}"
