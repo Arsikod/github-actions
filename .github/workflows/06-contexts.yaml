@@ -1,8 +1,11 @@
 name: 06 - Contexts
-run-name: My custom workflow run name - ${{runner.os}}
+run-name: CONTEXTS | DEBUG - ${{inputs.debug}}
 on:
-  push:
   workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        default: false
 
 env:
   MY_VAR: "I am single workflow var"
@@ -25,3 +28,4 @@ jobs:
         run: |
           echo "Single workflow: $MY_VAR"
           echo "Repo: $MY_REP_VAR"
+          echo "Inputs: ${{inputs.debug}}"
