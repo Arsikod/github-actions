@@ -30,7 +30,7 @@ jobs:
           echo "Run Number: ${{github.run_number}}"
       - name: Retrieve Variables
         run: |
-          echo "Single workflow: ${{vars.MY_VAR}}"
+          echo "Single workflow: ${{env.MY_VAR}}"
           echo "Repo: ${{vars.MY_REP_VAR}}"
       - name: Print Env Variables
         env:
