@@ -20,6 +20,6 @@ jobs:
           echo "Commit SHA: ${{github.sha}}"
           echo "Runner OS: ${{runner.os}}"
       - name: Print when triggered from main
-        if: ${{inputs.debug == true}} && ${{github.ref_name == 'main'}}
+        if: ${{inputs.debug == true && github.ref_name == 'main'}}
         run: |
           echo "Hello morld"
