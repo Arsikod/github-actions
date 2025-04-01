@@ -45,5 +45,3 @@ jobs:
           echo "Org overwritten var: $OVERRITEN_PROD_ENV_VAR"
           echo "Repo var: $MY_REP_VAR"
           echo "Environment var: $TARGET_VAR"
-  echo-undefined:
-    runs-on: ubuntu-latest
