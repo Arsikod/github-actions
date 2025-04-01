@@ -5,6 +5,7 @@ on:
 
 env:
   MY_VAR: "I am single workflow var"
+  MY_REP_VAR: ${{vars.MY_REP_VAR}}
 
 jobs:
   echo-data:
