@@ -17,7 +17,7 @@ jobs:
           echo "Title ${{github.event.pull_request.labels}}"
       - name: "[🪲] Bug Step"
         if: ${{failure() && !cancelled() && contains(github.event.pull_request.title, 'fix')}}
-        run:
+        run: echo I am a bug fix f⚒️
       - name: Sleep for 20 secs
         run: sleep 20
       - name: Failing step
