@@ -15,7 +15,7 @@ jobs:
         run: |
           echo "Title ${{github.event.pull_request.title}}"
           cat << EOF
-          "Labels ${{ toJson(github.event.pull_request.labels)}}"
+          "Labels ${{ toJson(github.event.pull_request.labels.name)}}"
           EOF
       - name: "[🪲] Bug Step"
         if: ${{failure() && !cancelled() && contains(github.event.pull_request.title, 'fix')}}
@@ -23,7 +23,7 @@ jobs:
       - name: Sleep for 20 secs
         run: sleep 20
       - name: Failing step
-        run: exit ${{inputs.shouldFail}}
+        run: exit ${{inputs.shouldFail || 1}}
       - name: Execute if prev succeded
         if: ${{success()}}
         run: echo "I will print if ancestor succeeds"
