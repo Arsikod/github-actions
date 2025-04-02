@@ -1,0 +1,27 @@
+name: 09 - Using Functions
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      shouldFail:
+        type: number
+        default: 1
+
+jobs:
+  echo1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Failing step
+        run: exit ${{inputs.shouldFail}}
+      - name: Execute if prev succeded
+        if: ${{success()}}
+        run: echo "I will print if ancestor succeeds"
+      - name: Execute if any prev is failed
+        if: ${{failure()}}
+        run: echo "I will execute if ancestor fails"
+      - name: Execute if not cancelled
+        if: ${{!cancelled()}}
+        run: echo "I will execute if workflow is not cancelled"
+      - name: Execute when cancelled
+        if: ${{cancelled()}}
+        run: echo "I am running because of cancellation"
