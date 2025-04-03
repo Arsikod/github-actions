@@ -1,6 +1,5 @@
 name: 09 - Using Functions
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       shouldFail:
@@ -15,7 +14,7 @@ jobs:
         run: |
           echo "Title ${{github.event.pull_request.title}}"
           cat << EOF
-          "Labels ${{ toJson(github.event.pull_request.labels.name)}}"
+          "Labels ${{ toJson(github.event.pull_request.labels)}}"
           EOF
       - name: "[🪲] Bug Step"
         if: ${{failure() && !cancelled() && contains(github.event.pull_request.title, 'fix')}}
