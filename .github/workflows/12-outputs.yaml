@@ -14,25 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       build-status: ${{steps.build.outputs.status}}
-      output1: ${{steps.build.outputs.output1}}
-      output2: ${{steps.build.outputs.output2}}
     steps:
       - name: Print GITHUB_OUTPUT path
         run: echo $GITHUB_OUTPUT
 
       - name: Build
         id: build
-        run: |
-          echo "status=${{inputs.build-status}}" >> $GITHUB_OUTPUT
-          echo "output1=value1" >> $GITHUB_OUTPUT
-          echo "output2=value2" >> $GITHUB_OUTPUT
-          echo $GITHUB_OUTPUT
-          echo "mistake=true" > "$GITHUB_OUTPUT"
-          echo $GITHUB_OUTPUT
-
-      - name: Step with mistake
-        run: echo "output2=value2" >> "$GITHUB_OUTPUT"
-          cat "$GITHUB_OUTPUT"
+        run: echo "status=${{inputs.build-status}}" >> $GITHUB_OUTPUT
 
   deploy:
     runs-on: ubuntu-latest
@@ -40,8 +28,6 @@ jobs:
     if: ${{needs.build.outputs.build-status == 'success' }}
     steps:
       - name: Deploy
-        run: echo "Deploying ${{needs.build.outputs.build-status}}"
-      - name: Print Outputs
         run: |
-          echo "Output1 ${{needs.build.outputs.output1}}"
-          echo "Output2 ${{needs.build.outputs.output2}}"
+          echo "Deploying"
+          cat "$GITHUB_OUTPUT"
