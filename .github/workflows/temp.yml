@@ -1,0 +1,12 @@
+name: 05 - 1 - Temp
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: main
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Running whenever pr is opened or synchronized and branch is main'
