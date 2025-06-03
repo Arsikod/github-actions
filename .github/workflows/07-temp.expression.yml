@@ -1,0 +1,26 @@
+name: 07 - temp - expressions
+run-name: 07 - temp - expression ${{inputs.debug == true && 'ON' || 'OFF'}}
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        default: false
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "[debug] Print startup data"
+        if: ${{inputs.debug == true}}
+        run: |
+          echo "Triggered by ${{github.event_name}}"
+          echo "Branch: ${{github.event.ref}}"
+          echo "Commit SHA: ${{github.sha}}"
+      - name: "[debug] Print when triggered from main"
+        if: ${{inputs.debug  == true && github.ref_name == 'main'}}
+        run: echo "I was triggered from main"
+      - name: Greeting
+        run: echo "Hello world"
