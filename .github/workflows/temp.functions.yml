@@ -21,7 +21,7 @@ jobs:
         if: failure()
         run: I will print if prev fails
       - name: I will execute
-        if: !cancelled()
+        if: ${{!cancelled()}}
         run: I will print except if cancelled
       - name: I will exec when cancelled
         if: cancelled()
