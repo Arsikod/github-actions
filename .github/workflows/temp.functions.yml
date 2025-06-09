@@ -16,13 +16,13 @@ jobs:
         run: exit ${{inputs.exit_code}}
       - name: I will be skipped
         if: ${{success()}}
-        run: I will print if prev step succeeded
+        run: echo "I will print if prev step succeeded"
       - name: I will execute if prev failed
         if: ${{failure()}}
-        run: I will print if prev fails
+        run: echo "I will print if prev fails"
       - name: I will execute
         if: ${{!cancelled()}}
-        run: I will print except if cancelled
+        run: echo "I will print except if cancelled"
       - name: I will exec when cancelled
         if: ${{cancelled()}}
-        run: Executed because of cancellation
+        run: echo "Executed because of cancellation"
