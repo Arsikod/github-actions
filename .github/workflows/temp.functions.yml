@@ -12,6 +12,8 @@ jobs:
   echo:
     runs-on: ubuntu-latest
     steps:
+      - name: Sleep for 20 secs
+        run: sleep 20
       - name: Failing step
         run: exit ${{inputs.exit_code}}
       - name: I will be skipped
