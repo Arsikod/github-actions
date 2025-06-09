@@ -12,8 +12,16 @@ jobs:
   echo:
     runs-on: ubuntu-latest
     steps:
-      - name: Sleep for 20 secs
-        run: sleep 20
+      - name: Print PR title
+        run: echo ${{github.event.pull_request.title}}
+      - name: Print PR labels
+        run: |
+          cat << EOF
+          ${{ toJSON(github.event.pull_request.labels) }}
+          EOF
+      - name: BUG STEP
+        if: ${{!cancelled() && contains(github.event.pull_request.title, 'fix')}}
+        run: echo ${{github.event.pull_request.title}}
       - name: Failing step
         run: exit ${{inputs.exit_code}}
       - name: I will be skipped
