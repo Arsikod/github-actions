@@ -1,0 +1,28 @@
+name: 09 - temp - using functions
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      exit_code:
+        type: number
+        default: 1
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Failing step
+        run: exit ${{inputs.exit_code}}
+      - name: I will be skipped
+        if: success()
+        run: I will print if prev step succeeded
+      - name: I will execute if prev failed
+        if: failure()
+        run: I will print if prev fails
+      - name: I will execute
+        if: !cancelled()
+        run: I will print except if cancelled
+      - name: I will exec when cancelled
+        if: cancelled()
+        run: Executed because of cancellation
