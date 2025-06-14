@@ -33,7 +33,7 @@ jobs:
 
       - name: Download cached dependencies
         id: cache
-        if: ${{inputs.use-cache}}
+        if: ${{inputs.use-cache == 'true'}}
         uses: actions/cache@v3
         with:
           path: ~/.pnpm-store
@@ -47,7 +47,7 @@ jobs:
           version: 10
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit == 'true'
+        if: ${{steps.cache.outputs.cache-hit == 'true'}}
         run: |
           echo ⏳ installing dependencies
           pnpm install
