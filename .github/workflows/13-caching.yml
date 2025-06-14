@@ -38,16 +38,14 @@ jobs:
 
       - name: Download cached dependencies
         id: cache
-        if: ${{inputs.use-cache == true}}
+        if: ${{inputs.use-cache}}
         uses: actions/cache@v3
         with:
-          path: ~/.pnpm-store
-          key: ${{runner.os}}-pnpm-store-${{hashFiles('**/pnpm-lock.yaml')}}
-          restore-keys: |
-            ${{runner.os}}-pnpm-store-
+          path: 04-using-actions/react-app/node_modules
+          key: deps-node-modules-${{hashFiles('04-using-actions/react-app/pnpm-lock.yaml')}}
 
       - name: Install dependencies
-        if: ${{steps.cache.outputs.cache-hit != 'true'}}
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           echo ⏳ installing dependencies
           pnpm install
