@@ -3,6 +3,10 @@ name: 14 - Artifacts
 on:
   workflow_dispatch:
 
+env:
+  build-artifact-key: app-${{github.sha}}
+  test-coverage-key: test-coverage-${{github.sha}}
+
 jobs:
   test-build:
     runs-on: ubuntu-latest
@@ -34,15 +38,22 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm install
 
-      - name: Testing
-        run: pnpm test
+      - name: Test coverage report
+        run: pnpm coverage
+
+      - name: Upload test resutls
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.test-coverage-key}}
+          path: 04-using-actions/react-app/coverage
+
       - name: Building
         run: pnpm build
 
       - name: Upload build files
         uses: actions/upload-artifact@v4
         with:
-          name: app
+          name: ${{env.build-artifact-key}}
           path: 04-using-actions/react-app/dist
   deploy:
     runs-on: ubuntu-latest
@@ -51,7 +62,7 @@ jobs:
       - name: Download build files
         uses: actions/download-artifact@v4
         with:
-          name: app
+          name: ${{env.build-artifact-key}}
           path: dist
       - name: Show folder structure
         run: ls -R
