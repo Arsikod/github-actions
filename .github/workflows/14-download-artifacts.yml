@@ -18,7 +18,7 @@ jobs:
           node-version: 20.x
       - name: Download cached dependencies
         id: cache
-        uses: actions/cachev3
+        uses: actions/cache@v3
         with:
           key: deps-node-modules-${{hashFiles('04-using-actions/react-app/pnpm-lock.yaml')}}
           path: 04-using-actions/react-app/node_modules
