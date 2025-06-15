@@ -52,6 +52,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app
-          path: build
+          path: dist
       - name: Show folder structure
         run: ls -R
