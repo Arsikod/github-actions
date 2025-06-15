@@ -49,7 +49,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: 04-using-actions/react-app/node_modules
-          key: ${{steps.cache-key.outputs.deps-cache-key}}
+          key: ${{steps.cache-key.outputs.CACHE_KEY}} ✅
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
