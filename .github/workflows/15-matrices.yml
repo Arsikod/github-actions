@@ -2,20 +2,40 @@ name: 15 - Working with matrices
 
 on:
   workflow_dispatch:
+    inputs:
+      fail-fast:
+        description: Strategy fail fast
+        type: boolean
+        default: false
 
 jobs:
   backwards-compatibility:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: ${{inputs.fail-fast}}
       matrix:
-        node: [18.x, 20.x, 21.x]
-        os: [ubuntu-latest, windows-lates]
+        node: [18.x, 20.x]
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            node-version: 21.x
+            experimental: true
+
     name: "${{matrix.os}}-${{matrix.node}}"
     steps:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: ${{matrix.node}}
+      - name: Fail if experimental
+        if: ${{matrix.experimental}}
+        run: |
+          echo "Failing due to experimental"
+          echo exit 1
       - name: Perform some tests
         run: |
           echo "Testing on OS ${{matrix.os}} and NodeJS ${{matrix.node}}"
+          sleep 10
+      - name: Upload test results
+        run: |
+          echo "Uploading test results"
