@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: ${{inputs.fail-fast}}
       matrix:
-        node: [18.x, 20.x]
+        node: [20.x]
         os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
         if: ${{matrix.experimental}}
         run: |
           echo "Failing due to experimental"
-          echo exit 1
+          exit 1
       - name: Perform some tests
         run: |
           echo "Testing on OS ${{matrix.os}} and NodeJS ${{matrix.node}}"
