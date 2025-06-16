@@ -45,10 +45,14 @@ jobs:
     strategy:
       matrix:
         color: [red, green]
-        shape: [circle, suquare]
+        shape: [circle, square]
         size: [small, large]
         include:
           - opacity: 50
+          - color: red
+            opacity: 75
+          - shape: pentagon
+            opacity: 100
           - color: red
             shape: triangle
     steps:
