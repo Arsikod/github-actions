@@ -1,4 +1,4 @@
-name: 16 - working with Environments
+name: 16 - Working with Environments
 run-name: 16 - Working with Envs | env - ${{inputs.target-env}}
 
 on:
@@ -8,12 +8,26 @@ on:
         type: environment
         default: staging
 
+env:
+  my-env-value: ${{vars.MY_ENV_VALUE || 'default env value'}}
+
 jobs:
-  echo:
+  deploy-staging:
     runs-on: ubuntu-latest
-    environment: ${{inputs.target-env}}
-    env:
-      my-env-value: ${{vars.MY_ENV_VALUE || 'default env value'}}
+    environment: staging
+    steps:
+      - name: Deploying to staging
+        run: echo "Deploying to staging ${{env.my-env-value}}"
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    steps:
+      - name: E2E tests
+        run: echo "Running E2E"
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    environment: prod
     steps:
       - name: Echo vars
-        run: echo "Env variable ${{env.my-env-value}}"
+        run: echo "Deploying to prod ${{env.my-env-value}}"
