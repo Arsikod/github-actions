@@ -1,5 +1,5 @@
 name: 16 - working with Environments
-run-name: 16 - Working with Envs | env - ${{github.env}}
+run-name: 16 - Working with Envs | env - ${{inputs.target-env}}
 
 on:
   workflow_dispatch:
@@ -16,4 +16,4 @@ jobs:
       my-env-value: ${{vars.MY_ENV_VALUE || 'default env value'}}
     steps:
       - name: Echo vars
-        run: echo "Env variable ${{vars.MY_ENV_VALUE}}"
+        run: echo "Env variable ${{env.my-env-value}}"
