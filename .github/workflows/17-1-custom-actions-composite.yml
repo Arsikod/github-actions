@@ -29,6 +29,7 @@ jobs:
           working-dir: ${{env.working-directory}}
           target-env: ${{inputs.target-env}}
       - name: Testing
+        if: ${{inputs.target-env == 'dev'}}
         run: pnpm test
 
       - name: Build
