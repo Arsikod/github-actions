@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: 20.x
           working-dir: ${{env.working-directory}}
+          target-env: prod
       - name: Testing
         run: pnpm test
 

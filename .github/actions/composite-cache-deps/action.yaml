@@ -10,6 +10,10 @@ inputs:
     description: "The working directory of the application"
     required: false
     default: "."
+  target-env:
+    description: "dev or prod"
+    required: false
+    default: dev
 runs:
   using: "composite" #inform gh-actions that this is composite custom action
   steps: #execution array
@@ -27,7 +31,7 @@ runs:
       id: cache-key
       shell: bash
       run: |
-        echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ hashFiles(format('{0}/pnpm-lock.yaml', inputs.working-dir)) }}" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ inputs.target-env }}-${{ hashFiles(inputs.working-dir + '/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
 
     - name: Download cached dependencies
       id: cache
@@ -45,5 +49,9 @@ runs:
       shell: bash
       run: |
         pnpm config set store-dir ~/.pnpm-store 
-        echo 'Installing new dependencies'
-        pnpm install
+        echo "Installing dependencies for target env: ${{ inputs.target-env }}"
+        if [ "${{ inputs.target-env }}" = "prod" ]; then
+          pnpm install --prod --frozen-lockfile
+        else
+          pnpm install --frozen-lockfile
+        fi
