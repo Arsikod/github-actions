@@ -9,7 +9,7 @@ inputs:
   working-dir:
     description: "The working directory of the application"
     required: false
-    default: "./"
+    default: "."
 runs:
   using: "composite" #inform gh-actions that this is composite custom action
   steps: #execution array
@@ -23,17 +23,26 @@ runs:
       with:
         version: 10
 
-    - name: Cache dependencies
+    - name: Calculate cache key
+      id: cache-key
+      run: |
+        echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ hashFiles(format('{0}/pnpm-lock.yaml', inputs.working-dir)) }}" >> $GITHUB_OUTPUT
+
+    - name: Download cached dependencies
       id: cache
       uses: actions/cache@v3
       with:
-        path: ${{inputs.working-dir}}
-        key: deps-modules${{hashFiles(format('{0}/{1}', inputs.working-dir, 'pnpm-lock.yaml'))}}
+        # ✅ added caching of store
+        path: |
+          ~/.pnpm-store                            
+          ${{inputs.working-dir}}/node_modules
+        key: ${{steps.cache-key.outputs.CACHE_KEY}}
 
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       working-directory: ${{inputs.working-dir}}
       shell: bash
       run: |
+        pnpm config set store-dir ~/.pnpm-store 
         echo 'Installing new dependencies'
         pnpm install

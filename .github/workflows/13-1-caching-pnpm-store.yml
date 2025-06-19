@@ -1,12 +1,8 @@
-name: 13 - Caching PNPM store
+name: 13 - 1 - Caching PNPM store
 
 on:
   workflow_dispatch:
     inputs:
-      use-cache:
-        description: Should use cache
-        type: boolean
-        default: true
       node-version:
         description: Node version
         type: choice
@@ -45,7 +41,6 @@ jobs:
 
       - name: Download cached dependencies
         id: cache
-        if: ${{inputs.use-cache}}
         uses: actions/cache@v3
         with:
           # ✅ added caching of store
