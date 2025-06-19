@@ -25,6 +25,7 @@ runs:
 
     - name: Calculate cache key
       id: cache-key
+      shell: bash
       run: |
         echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ hashFiles(format('{0}/pnpm-lock.yaml', inputs.working-dir)) }}" >> $GITHUB_OUTPUT
 
