@@ -31,8 +31,7 @@ runs:
       id: cache-key
       shell: bash
       run: |
-        echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ inputs.target-env }}-${{ hashFiles(inputs.working-dir + '/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
-
+        echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ inputs.target-env }}-${{ hashFiles(format('{0}/pnpm-lock.yaml', inputs.working-dir)) }}" >> $GITHUB_OUTPUT
     - name: Download cached dependencies
       id: cache
       uses: actions/cache@v3
