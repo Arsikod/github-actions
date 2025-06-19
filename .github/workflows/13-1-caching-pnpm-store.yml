@@ -1,0 +1,143 @@
+name: 13 - Caching PNPM store
+
+on:
+  workflow_dispatch:
+    inputs:
+      use-cache:
+        description: Should use cache
+        type: boolean
+        default: true
+      node-version:
+        description: Node version
+        type: choice
+        options:
+          - 18.x
+          - 20.x
+          - 21.x
+        default: 20.x
+
+jobs:
+  install-deps:
+    runs-on: ubuntu-latest
+    outputs:
+      deps-cache-key: ${{steps.cache-key.outputs.CACHE_KEY}}
+    defaults:
+      run:
+        working-directory: 04-using-actions/react-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{inputs.node-version}}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Calculate cache key
+        id: cache-key
+        run: |
+          echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ hashFiles('04-using-actions/react-app/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Download cached dependencies
+        id: cache
+        if: ${{inputs.use-cache}}
+        uses: actions/cache@v3
+        with:
+          # ✅ added caching of store
+          path: |
+            ~/.pnpm-store                            
+            04-using-actions/react-app/node_modules
+          key: ${{steps.cache-key.outputs.CACHE_KEY}}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        # ✅ ensure consistent store path
+        run: |
+          pnpm config set store-dir ~/.pnpm-store    
+          echo ⏳ installing dependencies
+          pnpm install
+
+  linting:
+    runs-on: ubuntu-latest
+    needs: install-deps
+    defaults:
+      run:
+        working-directory: 04-using-actions/react-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{inputs.node-version}}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Download cached dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          # ✅ also cache store here
+          path: |
+            ~/.pnpm-store                           
+            04-using-actions/react-app/node_modules
+          key: ${{needs.install-deps.outputs.deps-cache-key}}
+
+        # ✅ ensure store path is used
+      - name: Configure pnpm store path
+        run: pnpm config set store-dir ~/.pnpm-store
+
+      - name: Testing
+        run: pnpm test
+
+      - name: Linting
+        run: pnpm lint
+
+  build:
+    runs-on: ubuntu-latest
+    needs: install-deps
+    defaults:
+      run:
+        working-directory: 04-using-actions/react-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{inputs.node-version}}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Download cached dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          # ✅ also cache store here
+          path: |
+            ~/.pnpm-store                           
+            04-using-actions/react-app/node_modules
+          key: ${{needs.install-deps.outputs.deps-cache-key}}
+
+        # ✅ ensure store path is used
+      - name: Configure pnpm store path
+        run: pnpm config set store-dir ~/.pnpm-store
+
+      - name: Building
+        run: pnpm build
+
+      - name: Deploying to nonprod
+        run: echo "Deploying to nonprod"

@@ -1,0 +1,39 @@
+name: Cache node and PNPM Dependencies
+description: "This action allows to cache both Node and NPM dependencies based on the pnpm-lock.yaml file."
+
+inputs:
+  node-version:
+    description: "Node version to use"
+    required: true
+    default: 20.x
+  working-dir:
+    description: "The working directory of the application"
+    required: false
+    default: "./"
+runs:
+  using: "composite" #inform gh-actions that this is composite custom action
+  steps: #execution array
+    - name: Setup NodeJS version ${{inputs.node-version}}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{inputs.node-version}}
+
+    - name: Setup PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ${{inputs.working-dir}}
+        key: deps-modules${{hashFiles(format('{0}/{1}', inputs.working-dir, 'pnpm-lock.yaml'))}}
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      working-directory: ${{inputs.working-dir}}
+      shell: bash
+      run: |
+        echo 'Installing new dependencies'
+        pnpm install
