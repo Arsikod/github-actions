@@ -49,4 +49,4 @@ runs:
       run: |
         pnpm config set store-dir ~/.pnpm-store 
         echo "Installing dependencies for target env: ${{ inputs.target-env }}"
-        ${{ inputs.target-env == "prod" && 'pnpm install --prod --frozen-lockfile' || pnpm install --frozen-lockfile}}
+        ${{ inputs.target-env == prod && 'pnpm install --prod --frozen-lockfile' || pnpm install --frozen-lockfile}}
