@@ -1,5 +1,4 @@
 node_modules/
-.pnpm/
 
 # EXCEPT for custom actions
 !.github/actions/**/node_modules
