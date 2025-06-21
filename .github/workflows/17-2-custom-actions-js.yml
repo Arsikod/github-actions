@@ -1,9 +1,16 @@
 name: 17 - 2 - Custom Actions - JS
+run-name: 17 - 2 - Custom Actions - JS | BB - ${{inputs.base-branch}} TB - ${{inputs.target-branch}} WD - ${{inputs.working-dir}}
 
 on:
   workflow_dispatch:
-
-run-name: 17 - 2 - Custom Actions - JS
+    inputs:
+      base-branch:
+        type: string
+        default: main
+      target-branch:
+        default: update-deps
+      working-dir:
+        default: 04-using-actions/react-app
 
 jobs:
   dependency-update:
@@ -14,3 +21,7 @@ jobs:
 
       - name: Check for dependency updates
         uses: ./.github/actions/js-dependency-update
+        with:
+          base-branch: ${{inputs.base-branch}}
+          target-branch: ${{inputs.target-branch}}
+          working-dir: ${{inputs.working-dir}}
