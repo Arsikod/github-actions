@@ -17,6 +17,9 @@ importers:
       '@actions/github':
         specifier: 6.0.0
         version: 6.0.0
+      uuid:
+        specifier: 11.1.0
+        version: 11.1.0
 
 packages:
 
@@ -106,6 +109,10 @@ packages:
 
   universal-user-agent@6.0.1:
     resolution: {integrity: sha512-yCzhz6FN2wU1NiiQRogkTQszlQSlpWaw8SvVegAc+bDxbzHgh1vX8uIe8OYyMH6DwH+sdTJsgMl36+mSMdRJIQ==}
+
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
@@ -214,6 +221,8 @@ snapshots:
       '@fastify/busboy': 2.1.1
 
   universal-user-agent@6.0.1: {}
+
+  uuid@11.1.0: {}
 
   uuid@8.3.2: {}
 
