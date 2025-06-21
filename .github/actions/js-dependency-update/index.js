@@ -69,7 +69,7 @@ async function run() {
       ...commonExecOpts,
     });
 
-    await exec.exec(`git add package.json pnpm-lock.yml`, [], {
+    await exec.exec(`git add package.json pnpm-lock.yaml`, [], {
       ...commonExecOpts,
     });
 
