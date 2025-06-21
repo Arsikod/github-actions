@@ -1,5 +1,6 @@
 const core = require("@actions/core");
 const exec = require("@actions/exec");
+const github = require("@actions/github");
 
 const isValidBranchName = ({ branchName }) =>
   /^[a-zA-Z0-9_\-\.\/]+$/.test(branchName);
@@ -7,11 +8,23 @@ const isValidBranchName = ({ branchName }) =>
 const isValidDirName = ({ dirName }) => /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
 
 async function run() {
-  const baseBranch = core.getInput("base-branch");
-  const targetBranch = core.getInput("target-branch");
-  const workingDir = core.getInput("working-directory");
-  const ghToken = core.getInput("gh-token");
+  const baseBranch = core.getInput("base-branch", {
+    required: true,
+  });
+  const targetBranch = core.getInput("target-branch", {
+    required: true,
+  });
+  const workingDir = core.getInput("working-directory", {
+    required: true,
+  });
+  const ghToken = core.getInput("gh-token", {
+    required: true,
+  });
   const debug = core.getBooleanInput("debug");
+
+  const commonExecOpts = {
+    cwd: workingDir,
+  };
 
   core.setSecret(ghToken);
 
@@ -36,24 +49,60 @@ async function run() {
   core.info(`[js-deps-update] : working dir is ${workingDir}`);
 
   await exec.exec("pnpm up", [], {
-    cwd: workingDir,
+    ...commonExecOpts,
   });
 
   const gitStatus = await exec.getExecOutput(
     "git status -s package*.json",
     [],
     {
-      cwd: workingDir,
+      ...commonExecOpts,
     }
   );
 
   if (gitStatus.stdout.length > 0) {
     core.info(`[js-deps-update] : There are updates available`);
+    await exec.exec(`git config --global user.name "gh-automation"`);
+    await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+    await exec.exec(`git switch ${targetBranch}`, [], {
+      ...commonExecOpts,
+    });
+
+    await exec.exec(`git switch ${targetBranch}`, [], {
+      ...commonExecOpts,
+    });
+
+    await exec.exec(`git add package.json pnpm-lock.yml`, [], {
+      ...commonExecOpts,
+    });
+
+    await exec.exec(`git commit -m "chore: update dependencies"`, [], {
+      ...commonExecOpts,
+    });
+
+    await exec.exec(`git push -u origin ${targetBranch} --force`, [], {
+      ...commonExecOpts,
+    });
+
+    const octokit = github.getOctokit(ghToken);
+
+    try {
+      await octokit.rest.pulls.create({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        title: "Update pnpm deps",
+        body: "this is PR updates pnpm packages",
+        base: baseBranch,
+        head: targetBranch,
+      });
+    } catch (error) {
+      core.error(`[js-deps-update] : smth went wrong`);
+      core.setFailed(error.message);
+      core.error(error);
+    }
   } else {
     core.info(`[js-deps-update] : No updates!`);
   }
-
-  core.info("I am a custom JS action");
 }
 
 run();
