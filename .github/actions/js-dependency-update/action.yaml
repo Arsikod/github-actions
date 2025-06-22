@@ -6,7 +6,7 @@ inputs:
     description: Base for the deps update Checks
     default: main
     required: false
-  target-branch:
+  head-branch:
     description: From which PR is created
     default: update-deps
     required: false

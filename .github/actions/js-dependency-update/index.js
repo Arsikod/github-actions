@@ -8,19 +8,10 @@ const isValidBranchName = ({ branchName }) =>
 const isValidDirName = ({ dirName }) => /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
 
 async function run() {
-  const baseBranch = core.getInput("base-branch", {
-    required: true,
-  });
-  const targetBranch = core.getInput("target-branch", {
-    required: true,
-  });
-  const workingDir = core.getInput("working-directory", {
-    required: true,
-  });
-  const ghToken = core.getInput("gh-token", {
-    required: true,
-  });
-  const debug = core.getBooleanInput("debug");
+  const { workingDir, ghToken, baseBranch, headBranch, debug } =
+    getWorkflowInputs();
+
+  const logger = setupLogger({ debug, prefix: "[js-dependency-update]" });
 
   const commonExecOpts = {
     cwd: workingDir,
@@ -28,14 +19,16 @@ async function run() {
 
   core.setSecret(ghToken);
 
+  logger.debug("Validating inputs - base-branch, head-branch, working dir");
+
   if (!isValidBranchName({ branchName: baseBranch })) {
     // core.error("Invalid base-branch name");
     core.setFailed("Invalid base-branch name");
     return;
   }
 
-  if (!isValidBranchName({ branchName: targetBranch })) {
-    core.setFailed("Invalid target-branch name");
+  if (!isValidBranchName({ branchName: headBranch })) {
+    core.setFailed("Invalid head-branch name");
     return;
   }
 
@@ -44,9 +37,9 @@ async function run() {
     return;
   }
 
-  core.info(`[js-deps-update] : base branch is ${baseBranch}`);
-  core.info(`[js-deps-update] : target branch is ${targetBranch}`);
-  core.info(`[js-deps-update] : working dir is ${workingDir}`);
+  logger.debug(`base branch is ${baseBranch}`);
+  logger.debug(`head branch is ${headBranch}`);
+  logger.debug(`working dir is ${workingDir}`);
 
   await exec.exec("pnpm up", [], {
     ...commonExecOpts,
@@ -61,11 +54,10 @@ async function run() {
   );
 
   if (gitStatus.stdout.length > 0) {
-    core.info(`[js-deps-update] : There are updates available`);
-    await exec.exec(`git config --global user.name "gh-automation"`);
-    await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+    logger.debug(`There are updates available`);
+    await setupGit();
 
-    await exec.exec(`git checkout -b ${targetBranch}`, [], {
+    await exec.exec(`git checkout -b ${headBranch}`, [], {
       ...commonExecOpts,
     });
 
@@ -77,7 +69,7 @@ async function run() {
       ...commonExecOpts,
     });
 
-    await exec.exec(`git push -u origin ${targetBranch} --force`, [], {
+    await exec.exec(`git push -u origin ${headBranch} --force`, [], {
       ...commonExecOpts,
     });
 
@@ -90,7 +82,7 @@ async function run() {
         title: "Update pnpm deps",
         body: "this is PR updates pnpm packages",
         base: baseBranch,
-        head: targetBranch,
+        head: headBranch,
       });
     } catch (error) {
       core.error(`[js-deps-update] : smth went wrong`);
@@ -98,8 +90,45 @@ async function run() {
       core.error(error);
     }
   } else {
-    core.info(`[js-deps-update] : No updates!`);
+    logger.debug(`No updates!`);
   }
 }
 
 run();
+
+function setupLogger({ debug, prefix } = { debug: false, prefix: "" }) {
+  return {
+    debug: (message) => {
+      if (debug) {
+        core.info(`DEBUG ${prefix}${prefix ? " : " : ""}${message}`);
+      }
+    },
+    error: (message) => {
+      core.error(`${prefix}${prefix ? " : " : ""}${message}`);
+    },
+  };
+}
+
+function getWorkflowInputs() {
+  const baseBranch = core.getInput("base-branch", {
+    required: true,
+  });
+  const headBranch = core.getInput("head-branch", {
+    required: true,
+  });
+
+  const workingDir = core.getInput("working-directory", {
+    required: true,
+  });
+  const ghToken = core.getInput("gh-token", {
+    required: true,
+  });
+  const debug = core.getBooleanInput("debug");
+
+  return { workingDir, ghToken, baseBranch, headBranch, debug };
+}
+
+async function setupGit() {
+  await exec.exec(`git config --global user.name "gh-automation"`);
+  await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+}

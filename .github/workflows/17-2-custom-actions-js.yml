@@ -7,10 +7,13 @@ on:
       base-branch:
         type: string
         default: main
-      target-branch:
+      head-branch:
         default: update-deps
       working-dir:
         default: 04-using-actions/react-app
+      debug:
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -32,6 +35,7 @@ jobs:
         uses: ./.github/actions/js-dependency-update
         with:
           base-branch: ${{inputs.base-branch}}
-          target-branch: ${{inputs.target-branch}}
+          head-branch: ${{inputs.head-branch}}
           working-directory: ${{inputs.working-dir}}
           gh-token: ${{secrets.GITHUB_TOKEN}}
+          debug: ${{inputs.debug}}
