@@ -18,8 +18,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     outputs:
-      build-status: build-status-of-deploy-job
-      url: url-of-deploy-job
+      build-status: ${{steps.build.outputs.build-status}}
+      url: ${{steps.build.outputs.url}}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
