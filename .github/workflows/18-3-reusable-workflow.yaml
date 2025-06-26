@@ -10,3 +10,5 @@ jobs:
   e2e-tests:
     needs: deploy
     uses: Arsikod/gh-actions-e2e/.github/workflows/e2e.yaml@main
+    secrets:
+      access-token: ${{secrets.GH_TOKEN}}
